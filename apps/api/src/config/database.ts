@@ -12,6 +12,7 @@ export const sequelize = new Sequelize({
   password: config.db.password,
   models,
   dialectOptions: config.db.ssl ? { ssl: { require: true, rejectUnauthorized: false } } : undefined,
+  logging: config.db.logging ? (msg: string) => console.warn(`[db] ${msg}`) : false,
   define: {
     underscored: true,
     freezeTableName: true,

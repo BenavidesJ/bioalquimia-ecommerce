@@ -10,9 +10,10 @@ interface DbConfig {
   password: string;
   ssl: boolean;
   sync: boolean;
+  logging: boolean;
 }
 
-function parseDatabaseUrl(url: string): Omit<DbConfig, 'sync'> {
+function parseDatabaseUrl(url: string): Omit<DbConfig, 'sync' | 'logging'> {
   const parsed = new URL(url);
   const ssl =
     parsed.searchParams.get('sslmode') === 'require' ||
@@ -30,9 +31,10 @@ function parseDatabaseUrl(url: string): Omit<DbConfig, 'sync'> {
 
 function resolveDbConfig(): DbConfig {
   const sync = process.env.DB_SYNC === 'true';
+  const logging = process.env.DB_LOGGING === 'true';
 
   if (process.env.DATABASE_URL) {
-    return { ...parseDatabaseUrl(process.env.DATABASE_URL), sync };
+    return { ...parseDatabaseUrl(process.env.DATABASE_URL), sync, logging };
   }
 
   return {
@@ -43,6 +45,7 @@ function resolveDbConfig(): DbConfig {
     password: process.env.DB_PASSWORD || 'postgres',
     ssl: false,
     sync,
+    logging,
   };
 }
 
