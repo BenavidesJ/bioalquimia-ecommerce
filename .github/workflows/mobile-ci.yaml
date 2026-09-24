@@ -1,0 +1,26 @@
+name: Mobile CI
+
+on:
+  push:
+    paths:
+      - '.github/workflows/mobile-ci.yaml'
+      - 'apps/mobile/**'
+  pull_request:
+    paths:
+      - '.github/workflows/mobile-ci.yaml'
+      - 'apps/mobile/**'
+
+concurrency:
+  group: mobile-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mobile:
+    name: Mobile check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Mobile setup
+        run: echo "apps/mobile esta vacio. El pipeline se completara cuando exista el proyecto React Native."

@@ -1,0 +1,44 @@
+name: Web CI
+
+on:
+  push:
+    paths:
+      - '.github/workflows/web-ci.yaml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.nvmrc'
+      - 'apps/web/**'
+  pull_request:
+    paths:
+      - '.github/workflows/web-ci.yaml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.nvmrc'
+      - 'apps/web/**'
+
+concurrency:
+  group: web-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: npm
+
+      - name: Install dependencies (workspaces)
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint -w @bioalquimia/web
+
+      - name: Build
+        run: npm run build -w @bioalquimia/web
