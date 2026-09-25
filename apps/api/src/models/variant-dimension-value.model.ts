@@ -9,6 +9,7 @@ import {
   Table,
   Unique,
 } from 'sequelize-typescript';
+import type { VariantDimension } from './variant-dimension.model';
 
 @Table({
   tableName: 'variant_dimension_values',
@@ -40,4 +41,6 @@ export class VariantDimensionValue extends Model {
   @Default(true)
   @Column({ type: DataType.BOOLEAN })
   isActive!: boolean;
+
+  declare dimension?: VariantDimension;
 }

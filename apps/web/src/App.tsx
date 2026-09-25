@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { LandingPage } from './pages/LandingPage'
+import { ProductDetailPage } from './pages/ProductDetailPage'
 import { AdminGate } from './pages/admin/AdminGate'
 import { AdminDashboard } from './pages/admin/AdminDashboard'
 import { AdminInventory } from './pages/admin/AdminInventory'
@@ -10,6 +11,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/catalogo/:id" element={<ProductDetailPage />} />
       <Route path="/admin" element={<AdminGate />}>
         <Route index element={<Navigate to="inicio" replace />} />
         <Route element={<AdminLayout />}>

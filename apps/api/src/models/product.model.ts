@@ -11,6 +11,10 @@ import {
   Unique,
   UpdatedAt,
 } from 'sequelize-typescript';
+import type { Aroma } from './aroma.model';
+import type { Category } from './category.model';
+import type { Presentation } from './presentation.model';
+import type { ProductImage } from './product-image.model';
 
 @Table({
   tableName: 'products',
@@ -46,6 +50,11 @@ export class Product extends Model {
   @Default(true)
   @Column({ type: DataType.BOOLEAN })
   isActive!: boolean;
+
+  declare category: Category;
+  declare presentations: Presentation[];
+  declare images: ProductImage[];
+  declare aromas: Aroma[];
 
   @CreatedAt
   @Column({ type: DataType.DATE })

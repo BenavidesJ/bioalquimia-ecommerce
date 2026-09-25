@@ -11,6 +11,8 @@ import {
   Unique,
   UpdatedAt,
 } from 'sequelize-typescript';
+import type { Unit } from './unit.model';
+import type { VariantDimensionValue } from './variant-dimension-value.model';
 
 @Table({
   tableName: 'presentations',
@@ -70,6 +72,9 @@ export class Presentation extends Model {
   @Default(true)
   @Column({ type: DataType.BOOLEAN })
   isActive!: boolean;
+
+  declare unit: Unit;
+  declare dimensionValues: VariantDimensionValue[];
 
   @CreatedAt
   @Column({ type: DataType.DATE })
