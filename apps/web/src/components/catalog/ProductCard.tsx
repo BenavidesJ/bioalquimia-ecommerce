@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   type CatalogProduct,
 } from '../../lib/api'
+import { toTitleCase } from '../../lib/text'
 
 interface ProductCardProps {
   product: CatalogProduct
@@ -23,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </Card.Body>
       )}
       <Card.Body gap="2">
-        <Card.Title>{product.name}</Card.Title>
+        <Card.Title>{toTitleCase(product.name)}</Card.Title>
         <Text textStyle="sm" color={product.inStock ? 'green.600' : 'red.400'} fontWeight="semibold">
           {product.inStock ? 'Disponible' : 'Agotado'}
         </Text>

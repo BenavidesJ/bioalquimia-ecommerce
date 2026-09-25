@@ -1,28 +1,32 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { createElement, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Alert,
-  Badge,
   Box,
-  Button,
-  Card,
-  DataList,
+  Container,
   Flex,
-  Image,
-  SimpleGrid,
-  Spinner,
-  Text,
-} from '@chakra-ui/react'
+} from '@chakra-ui/react';
+import { CarFront, FlaskConical, House, type LucideIcon } from 'lucide-react';
 import {
   fetchCatalogProduct,
-  formatCrc,
-  getPresentationLabel,
   type CatalogProduct,
-} from '../lib/api'
+} from '../lib/api';
+import { toTitleCase } from '../lib/text';
+import {
+  AlertComponent,
+  Breadcrumb,
+  ProductDetail,
+  SkeletonComponent,
+  SkeletonTextComponent,
+} from '../components';
+
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  HOG: House,
+  AUT: CarFront,
+}
 
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
   const [product, setProduct] = useState<CatalogProduct | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,97 +56,62 @@ export function ProductDetailPage() {
   }, [invalidId, productId])
 
   return (
-    <Box minH="100svh" p={4}>
-      <Button variant="outline" size="sm" onClick={() => navigate('/')} mb={4}>
-        Volver
-      </Button>
-
+    <Container>
       {error && (
-        <Alert.Root status="error" mb={4}>
-          <Alert.Indicator />
-          <Alert.Title>{error}</Alert.Title>
-        </Alert.Root>
+        <AlertComponent status="error" title={error} icon={<Alert.Indicator />} />
       )}
 
       {invalidId ? (
-        <Alert.Root status="error" mb={4}>
-          <Alert.Indicator />
-          <Alert.Title>Producto inválido</Alert.Title>
-        </Alert.Root>
+        <AlertComponent status="error" title="Producto inválido" />
       ) : loading ? (
-        <Flex justify="center" py={20}>
-          <Spinner size="xl" />
+        <Flex direction={{ base: 'column', md: 'row' }} gap={6} mt={4}>
+          <SkeletonComponent height="5rem" flex={{ base: '1', md: '0 0 33%' }} />
+          <Box flex="1">
+            <SkeletonComponent height="1.5rem" width="40%" />
+            <SkeletonTextComponent noOfLines={4} />
+          </Box>
         </Flex>
       ) : product ? (
-        <Flex direction={{ base: 'column', md: 'row' }} gap={6} maxW="6xl">
-          <Box>
-            {product.images.length > 0 ? (
-              <Image rounded="md" src={product.images[0].url} alt={product.name} />
-            ) : (
-              <Image rounded="md" src="https://placehold.co/100" alt="Placeholder" />
-            )}
-          </Box>
-
-          <Box flex="1" minW={0}>
-            <Flex align="center" gap={3} wrap="wrap">
-              <Badge variant="solid" colorPalette="green">
-                {product.category.name}
-              </Badge>
-              <Badge variant="subtle" colorPalette={product.inStock ? 'green' : 'red'}>
-                {product.inStock ? 'Disponible' : 'Agotado'}
-              </Badge>
-            </Flex>
-            <Text textStyle="3xl" fontWeight="bold" mt={2}>
-              {product.name}
-            </Text>
-            {product.description && <Text color="gray.600" mt={2}>{product.description}</Text>}
-
-            <Box mt={6}>
-              <Text textStyle="lg" fontWeight="bold" mb={3}>
-                Presentaciones
-              </Text>
-              <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
-                {product.presentations.map((presentation) => (
-                  <DataList.Root orientation="horizontal" width="100%" mt={3}>
-                    <Text fontWeight="semibold">{getPresentationLabel(presentation)}</Text>
-                    <DataList.Item>
-                      <DataList.ItemLabel>Precio</DataList.ItemLabel>
-                      <DataList.ItemValue>{formatCrc(presentation.priceCrc)}</DataList.ItemValue>
-                    </DataList.Item>
-                    <DataList.Item>
-                      <DataList.ItemLabel>Disponible</DataList.ItemLabel>
-                      <DataList.ItemValue>{presentation.availableStock} uds</DataList.ItemValue>
-                    </DataList.Item>
-                    {presentation.attributes.length > 0 && (
-                      <DataList.Item>
-                        <DataList.ItemLabel>Atributos</DataList.ItemLabel>
-                        <DataList.ItemValue>
-                          {presentation.attributes.map((attribute) => `${attribute.dimension}: ${attribute.value}`).join(', ')}
-                        </DataList.ItemValue>
-                      </DataList.Item>
-                    )}
-                  </DataList.Root>
-                ))}
-              </SimpleGrid>
-            </Box>
-
-            {product.hasAroma && (
-              <Box mt={6}>
-                <Text textStyle="lg" fontWeight="bold" mb={3}>
-                  Aromas disponibles
-                </Text>
-                <Flex gap={2} wrap="wrap">
-                  {product.aromas.map((aroma) => (
-                    <Badge key={aroma.id} variant="outline" colorPalette="green">
-                      {aroma.name}
-                    </Badge>
-                  ))}
-                </Flex>
-              </Box>
-            )}
-          </Box>
-        </Flex>
+        <>
+          <Breadcrumb
+            size={{ base: "md", lg: "lg" }}
+            items={[
+              { label: 'Catálogo', href: '/', icon: <FlaskConical size="1em" /> },
+              {
+                label: product.category.name,
+                icon: createElement(CATEGORY_ICONS[product.category.skuPrefix], { size: '1em' }),
+              },
+              { label: toTitleCase(product.name) },
+            ]}
+          />
+          {/* ==================================================================
+              DATOS DE EJEMPLO PARA PROBAR LA GALERÍA — BORRAR ESTE BLOQUE
+              Pega 8 imágenes distintas para ver la base, las flechas y la fila
+              de miniaturas. Al borrar este bloque, <ProductDetail /> vuelve a
+              usar las imágenes reales del API.
+              Para probar otras ramas: dejá 1 sola entrada (oculta flechas y
+              miniaturas) o images: [] (muestra el placeholder).
+              ================================================================== */}
+          <ProductDetail
+            product={{
+              ...product,
+              images: [
+                { url: 'https://placehold.co/600/1e40af/white?text=Imagen+1' },
+                { url: 'https://placehold.co/600/0f766e/white?text=Imagen+2' },
+                { url: 'https://placehold.co/600/b45309/white?text=Imagen+3' },
+                { url: 'https://placehold.co/600/7e22ce/white?text=Imagen+4' },
+                { url: 'https://placehold.co/600/be123c/white?text=Imagen+5' },
+                { url: 'https://placehold.co/600/15803d/white?text=Imagen+6' },
+                { url: 'https://placehold.co/600/0369a1/white?text=Imagen+7' },
+                { url: 'https://placehold.co/600/a16207/white?text=Imagen+8' },
+              ],
+            }}
+          />
+          {/* ==================================================================
+              FIN DEL BLOQUE DE DATOS DE EJEMPLO
+              ================================================================== */}
+        </>
       ) : null}
-    </Box>
+    </Container>
   )
 }
