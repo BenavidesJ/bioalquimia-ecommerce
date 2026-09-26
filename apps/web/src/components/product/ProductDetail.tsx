@@ -11,7 +11,7 @@ import {
   SimpleGrid,
   Text,
 } from '@chakra-ui/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import {
   formatCrc,
   getPresentationLabel,
@@ -68,7 +68,7 @@ export const ProductDetail = (props: PageProps) => {
                 rounded="full"
                 variant="surface"
               >
-                <ChevronLeft size={16} />
+                <FaChevronLeft size={16} />
               </IconButton>
               <IconButton
                 aria-label="Imagen siguiente"
@@ -82,7 +82,7 @@ export const ProductDetail = (props: PageProps) => {
                 rounded="full"
                 variant="surface"
               >
-                <ChevronRight size={16} />
+                <FaChevronRight size={16} />
               </IconButton>
             </>
           )}

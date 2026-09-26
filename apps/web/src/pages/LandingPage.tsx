@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { CatalogFilters, type CatalogFiltersState } from '../components/catalog/CatalogFilters'
 import { ProductCard } from '../components/catalog/ProductCard'
+import { Layout } from '../components/common/Layout'
 import { fetchCatalog, type CatalogPage, type CatalogParams } from '../lib/api'
 
 const PAGE_SIZE = 12
@@ -71,55 +72,57 @@ export function LandingPage() {
   const pageNumber = cursorStack.length + 1
 
   return (
-    <Flex minH="100svh">
-      <CatalogFilters filters={filters} onChange={handleFiltersChange} />
-      <Box flex="1" minW={0} p={4}>
-        <Flex justify="space-between" align="center" mb={4}>
-          <Box>
-            <Text textStyle="3xl" fontWeight="bold">
-              Bioalquimia
-            </Text>
-            <Text color="gray.600">Catálogo de productos</Text>
-          </Box>
-        </Flex>
-
-        {error && (
-          <Alert.Root status="error" mb={4}>
-            <Alert.Indicator />
-            <Alert.Title>{error}</Alert.Title>
-          </Alert.Root>
-        )}
-
-        {loading ? (
-          <Flex justify="center" py={20}>
-            <Spinner size="xl" />
-          </Flex>
-        ) : data && data.items.length > 0 ? (
-          <>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 3 }} gap={4}>
-              {data.items.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </SimpleGrid>
-
-            <Flex justify="flex-end" align="center" gap={3} mt={6}>
-              <Button variant="outline" size="sm" onClick={goToPreviousPage} disabled={cursorStack.length === 0}>
-                Anterior
-              </Button>
-              <Text textStyle="sm" color="gray.600">
-                Página {pageNumber}
+    <Layout>
+      <Flex minH="100%">
+        <CatalogFilters filters={filters} onChange={handleFiltersChange} />
+        <Box flex="1" minW={0} p={4}>
+          <Flex justify="space-between" align="center" mb={4}>
+            <Box>
+              <Text textStyle="3xl" fontWeight="bold">
+                Bioalquimia
               </Text>
-              <Button variant="solid" size="sm" onClick={goToNextPage} disabled={!data.pagination.hasMore}>
-                Siguiente
-              </Button>
+              <Text color="gray.600">Catálogo de productos</Text>
+            </Box>
+          </Flex>
+
+          {error && (
+            <Alert.Root status="error" mb={4}>
+              <Alert.Indicator />
+              <Alert.Title>{error}</Alert.Title>
+            </Alert.Root>
+          )}
+
+          {loading ? (
+            <Flex justify="center" py={20}>
+              <Spinner size="xl" />
             </Flex>
-          </>
-        ) : (
-          <Box textAlign="center" py={20}>
-            <Text color="gray.500">No hay productos para mostrar</Text>
-          </Box>
-        )}
-      </Box>
-    </Flex>
+          ) : data && data.items.length > 0 ? (
+            <>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 3 }} gap={4}>
+                {data.items.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </SimpleGrid>
+
+              <Flex justify="flex-end" align="center" gap={3} mt={6}>
+                <Button variant="outline" size="sm" onClick={goToPreviousPage} disabled={cursorStack.length === 0}>
+                  Anterior
+                </Button>
+                <Text textStyle="sm" color="gray.600">
+                  Página {pageNumber}
+                </Text>
+                <Button variant="solid" size="sm" onClick={goToNextPage} disabled={!data.pagination.hasMore}>
+                  Siguiente
+                </Button>
+              </Flex>
+            </>
+          ) : (
+            <Box textAlign="center" py={20}>
+              <Text color="gray.500">No hay productos para mostrar</Text>
+            </Box>
+          )}
+        </Box>
+      </Flex>
+    </Layout>
   )
 }
